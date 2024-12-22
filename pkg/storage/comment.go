@@ -25,7 +25,6 @@ func (s *storage) GetComments(filter map[string]any, limit int) ([]*model.Commen
 			news_id, 
 			text, 
 			parent_id, 
-			status,
 			created
 		FROM comment`
 	if len(whereClauses) > 0 {
@@ -49,7 +48,6 @@ func (s *storage) GetComments(filter map[string]any, limit int) ([]*model.Commen
 			&comment.NewsID,
 			&comment.Text,
 			&comment.ParentID,
-			&comment.Status,
 			&comment.Created,
 		)
 		if err != nil {
@@ -69,11 +67,11 @@ func (s *storage) AddComment(comment model.Comment) (int, error) {
 	var sql string
 	var args []any
 	if comment.ParentID == nil {
-		sql = `INSERT INTO comment ( text, parent_id, status) VALUES ($1, $2, $3) RETURNING id`
-		args = []any{comment.Text, comment.ParentID, comment.Status}
+		sql = `INSERT INTO comment ( text, parent_id) VALUES ($1, $2) RETURNING id`
+		args = []any{comment.Text, comment.ParentID}
 	} else {
-		sql = `INSERT INTO comment (news_id, text, status) VALUES ($1, $2, $3) RETURNING id`
-		args = []any{comment.NewsID, comment.Text, comment.Status}
+		sql = `INSERT INTO comment (news_id, text) VALUES ($1, $2) RETURNING id`
+		args = []any{comment.NewsID, comment.Text}
 	}
 
 	var id int
@@ -93,11 +91,11 @@ func (s *storage) AddComment(comment model.Comment) (int, error) {
 func (s *storage) GetCommentsByNews(newsID int) ([]*model.Comment, error) {
 	sql := `
 	SELECT 
-		id, news_id, text, parent_id, status, created 
+		id, news_id, text, parent_id, created 
 	FROM comment 
-	WHERE status = $1 AND 
-	news_id = $2`
-	rows, err := s.db.Query(context.Background(), sql, model.StatusApproved, newsID)
+	WHERE 
+		news_id = $2`
+	rows, err := s.db.Query(context.Background(), sql, newsID)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +108,6 @@ func (s *storage) GetCommentsByNews(newsID int) ([]*model.Comment, error) {
 			&comment.NewsID,
 			&comment.Text,
 			&comment.ParentID,
-			&comment.Status,
 			&comment.Created,
 		)
 		if err != nil {
@@ -119,11 +116,4 @@ func (s *storage) GetCommentsByNews(newsID int) ([]*model.Comment, error) {
 		comments = append(comments, &comment)
 	}
 	return comments, nil
-}
-
-// TODO тут бы RWMutex нужен
-func (s *storage) MarkComment(commentID int, status int) error {
-	sql := `UPDATE comment SET status = $1 WHERE id = $2`
-	_, err := s.db.Exec(context.Background(), sql, status, commentID)
-	return err
 }

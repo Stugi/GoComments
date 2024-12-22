@@ -18,7 +18,6 @@ type storage struct {
 type DB interface {
 	AddComment(model.Comment) (int, error)
 	GetCommentsByNews(int) ([]*model.Comment, error)
-	MarkComment(int, int) error
 	GetComments(map[string]any, int) ([]*model.Comment, error)
 }
 

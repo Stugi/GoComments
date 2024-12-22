@@ -8,6 +8,5 @@ CREATE TABLE comment (
     text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     news_id INTEGER ,
-    parent_id INTEGER  REFERENCES comment(id),
-    status INTEGER
+    parent_id INTEGER  REFERENCES comment(id)
     )

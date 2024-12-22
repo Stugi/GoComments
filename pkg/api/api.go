@@ -95,22 +95,3 @@ func sendError(w http.ResponseWriter, err error, status int) {
 	json.NewEncoder(w).Encode(response)
 	return
 }
-
-// func (api *API) posts(w http.ResponseWriter, r *http.Request) {
-// 	// This code snippet is from a Go API implementation. Let me explain what it does:
-// 	vars := mux.Vars(r)
-// 	n := vars["n"]
-// 	count, err := strconv.Atoi(n)
-// 	if err != nil {
-// 		count = 10
-// 	}
-// 	posts, err := api.db.GetPosts(1, count)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	json.NewEncoder(w).Encode(posts)
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusOK)
-// }
