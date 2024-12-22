@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	apipkg "stugi/go-comment/pkg/api"
-	cachepkg "stugi/go-comment/pkg/cache"
+	cache "stugi/go-comment/pkg/cache"
 	"stugi/go-comment/pkg/service"
 	"stugi/go-comment/pkg/storage"
+	api "stugi/go-comment/pkg/transport"
 )
 
 // конфигурация приложения.
@@ -19,7 +19,7 @@ type config struct {
 
 func main() {
 	// инициализация зависимостей приложения
-	cache := cachepkg.New(time.Hour * 24)
+	cache := cache.New(time.Hour * 24)
 
 	// инициализация БД
 	db, err := storage.New(cache)
@@ -29,7 +29,7 @@ func main() {
 	// инициализация сервиса комментариев
 	comment := service.New(db)
 	// инициализация API
-	api := apipkg.New(comment)
+	api := api.New(comment)
 
 	// запуск веб-сервера с API и приложением
 	err = http.ListenAndServe(":80", api.Router())

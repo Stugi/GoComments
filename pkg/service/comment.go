@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"stugi/go-comment/pkg/model"
 	"stugi/go-comment/pkg/storage"
 )
@@ -15,10 +16,10 @@ func New(db storage.DB) *Service {
 	}
 }
 
-func (s *Service) AddComment(comment model.Comment) (int, error) {
+func (s *Service) AddComment(ctx context.Context, comment model.Comment) (int, error) {
 	return s.db.AddComment(comment)
 }
 
-func (s *Service) GetCommentsByNewsID(newsID int) ([]*model.Comment, error) {
+func (s *Service) GetCommentsByNewsID(ctx context.Context, newsID int) ([]*model.Comment, error) {
 	return s.db.GetCommentsByNews(newsID)
 }
